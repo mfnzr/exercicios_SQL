@@ -1,0 +1,432 @@
+﻿Crie outro banco de dados, depois faça a criação das seguintes tabelas.
+
+
+Observação: As tabelas abaixo são as mesmas criadas anteriormente, porém com mais informações, utilizem o mesmo script criado anteriormente, as informações novas estarão em destaque.
+
+
+Modelo de criação de chave estrangeira:
+FOREIGN KEY (id) REFERENCES nometabela (tabela_id) 
+
+
+Tabela departamento:
+* O campo codDepartamento é de numeração automática, sendo chave primária da tabela;
+* O campo nome é de texto, de tamanho variável máximo 40, sendo uma chave candidata, de preenchimento obrigatório;
+* O campo descricaoFuncional é de texto, de tamanho variável máximo 80, sendo um campo de preenchimento opcional;
+* O campo localizacao é de texto, de tamanho ilimitado
+
+
+—---------------------------------------------------------------------------------------------------------
+CREATE TABLE departamento (
+    codDepartamento INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR (40) UNIQUE NOT NULL,
+    descricaoFuncional VARCHAR(80),
+    localizao LONGTEXT
+    );
+.—---------------------------------------------------------------------------------------------------------
+
+
+
+
+Tabela estado:
+* O campo siglaEstado é de texto, de tamanho fixo 2, sendo chave primária da tabela;
+* O campo nome é de texto, de tamanho variável máximo 30, sendo uma chave candidata (única), de preenchimento obrigatório.
+
+
+—---------------------------------------------------------------------------------------------------------
+CREATE TABLE estado (
+    siglaEstado VARCHAR(2) PRIMARY KEY,
+    nome VARCHAR(30) UNIQUE NOT NULL
+    );
+—---------------------------------------------------------------------------------------------------------
+
+
+Tabela cidade:
+* O campo codCidade é de numeração automática, sendo chave primária da tabela;
+* O campo nome é texto, de tamanho variável máximo 50, sendo uma chave candidata, de preenchimento obrigatório;
+* O campo siglaEstado é de texto, de tamanho fixo 2 e de preenchimento obrigatório, sendo uma chave estrangeira da tabela estado. 
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE cidade(
+    codCidade INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(50) UNIQUE NULL,
+    siglaEstado VARCHAR(2) NOT NULL,
+    FOREIGN KEY (siglaEstado) REFERENCES estado (siglaEstado) 
+    ); 
+—---------------------------------------------------------------------------------------------------------
+
+
+
+
+Tabela vendedor:
+* O campo codVendedor é de numeração automática, sendo chave primária da tabela;
+* O campo nome é de texto, de tamanho variável máximo 60, de preenchimento obrigatório;
+* O campo dataNascimento é um campo tipo data;
+* O campo endereco é de texto, de tamanho variável máximo 60;
+* O campo cep é tamanho fixo máximo 8;
+* O campo telefone é caracter, de tamanho variável máximo 20;
+* O campo codCidade é inteiro sendo uma chave estrangeira da tabela cidade;
+* A dataContratacao é um campo data, que terá como valor padrão a data atual de inserção do registro, no caso de uma data não ter sido especificada;
+* O campo codDepartamento é inteiro sendo uma chave estrangeira da tabela departamento;
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE vendedor (
+    codVendedor INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR (60) NOT NULL,
+    dataNascimento DATE,
+    endereco VARCHAR(60),
+    cep CHAR(8),
+    telefone VARCHAR(20),
+    codCidade int,
+    FOREIGN KEY (codCidade) REFERENCES cidade (codCidade) 
+    dataContratacao DATE DEFAULT (CURRENT_DATE),
+    codDepartamento INT,
+    FOREIGN KEY (codDepartamento) REFERENCES departamento (codDepartamento) 
+    );
+—---------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+Tabela cliente:
+* O campo codCliente é um campo de numeração automática, sendo chave primária da tabela;
+* O campo endereco é de texto, de tamanho variável máximo 60;
+* O campo codCidade é inteiro e de preenchimento obrigatório, sendo uma chave estrangeira da tabela cidade;
+* O campo telefone é de texto, de tamanho variável máximo 20;
+* O campo tipo é caracter, de tamanho fixo máximo 1;
+* A dataCadastro é um campo data, que terá como valor padrão a data atual de cadastro, no caso de uma data não ter sido especificada;
+* O campo cep é tamanho fixo máximo 8;
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE cliente (
+    codCliente INT AUTO_INCREMENT PRIMARY KEY,
+    endereco VARCHAR(60),
+    codCidade int NOT NULL,
+    FOREIGN KEY (codCidade) REFERENCES cidade (codCidade), 
+    telefone VARCHAR(20),
+    tipo  VARCHAR(1) CHECK (tipo in ("F", "j")),
+    dataCasdastro DATE DEFAULT (CURRENT_DATE),
+    cep CHAR(8)
+    );
+—---------------------------------------------------------------------------------------------------------
+
+
+
+
+Tabela clienteFisico:
+* O campo codCliente é um inteiro, sendo chave primária desta tabela, e chave estrangeira da tabela cliente;
+* O campo nome é de texto, de tamanho variável máximo 50, de preenchimento obrigatório;
+* O campo dataNascimento é um campo data;
+* O campo cpf é caracter, de tamanho variável máximo 11, de preenchimento obrigatório, sendo uma chave candidata;
+* O campo rg é caracter, de tamanho variável máximo 8;
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE clienteFisico (
+    codCliente int PRIMARY KEY,
+    FOREIGN KEY (codCliente) REFERENCES cliente (codCliente), 
+    nome VARCHAR (50) NOT NULL,
+    dataNascimento DATE,
+    cpf VARCHAR(11) NOT NULL UNIQUE,
+    rg VARCHAR(8)
+    );
+—---------------------------------------------------------------------------------------------------------
+
+
+
+
+Tabela clienteJuridico:
+* O campo codCliente é um inteiro, sendo chave primária desta tabela, e chave estrangeira da tabela cliente;
+* O campo nomeFantasia é de texto, de tamanho variável máximo 80, sendo uma chave candidata;
+* O campo razaoSocial é de texto, de tamanho variável máximo 80, sendo uma chave candidata, de preenchimento obrigatório;
+* O campo ie (inscrição estadual) é de texto, de tamanho variável máximo 20, de preenchimento obrigatório, sendo uma chave candidata;
+* O campo cgc é de texto, de tamanho variável máximo 20, sendo uma chave candidata, de preenchimento obrigatório;
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE clienteJuridico (
+    codCliente int PRIMARY KEY,
+    FOREIGN KEY (codCliente) REFERENCES cliente (codCliente), 
+    nomeFantasia VARCHAR(80) UNIQUE,
+    razaoSocial VARCHAR(80) NOT NULL UNIQUE,
+    ie VARCHAR(20) NOT NULL UNIQUE,
+    cgc VARCHAR(20) NOT NULL UNIQUE
+    );
+—---------------------------------------------------------------------------------------------------------
+
+
+
+
+Tabela classe:
+* O campo codClasse é um campo de numeração automática, sendo chave primária da tabela;
+* O campo sigla é de texto, de tamanho variável máximo 12;
+* O campo nome é de texto, de tamanho variável máximo 40, com preenchimento obrigatório;
+* O campo descricao é de texto, de tamanho variável máximo 80.
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE classe (
+    codClasse INT AUTO_INCREMENT PRIMARY KEY,
+    sigla VARCHAR (12),
+    nome VARCHAR (40) NOT NULL,
+    descricao VARCHAR (80)
+    );
+—---------------------------------------------------------------------------------------------------------
+
+
+
+
+Tabela produto:
+* O campo codProduto é um campo de numeração automática, sendo chave primária da tabela;
+* O campo descrição é de texto, de tamanho variável máximo 40, sendo de preenchimento obrigatório;
+* O campo unidadeMedida é de texto, de tamanho fixo máximo 2;
+* O campo embalagem é de texto, de tamanho variável máximo 15, que terá como valor padrão padrão ‘Fardo’, no caso de uma embalagem não ter sido especificada;
+* O campo codClasse é um inteiro, sendo chave estrangeira da tabela classe;
+* O campo precoVenda é um numérico com tamanho 14, com 2 casas decimais;
+* O campo estoqueMinimo é um numérico com tamanho 14, com 2 casas decimais;
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE produto (
+    codProduto INT AUTO_INCREMENT PRIMARY KEY,
+    descricao VARCHAR(40) NOT NULL,
+    unidadeMedida CHAR(2),
+    embalagem VARCHAR(15) DEFAULT "Fardo",
+    codCLasse int,
+    FOREIGN KEY (codClasse) REFERENCES classe (codClasse) 
+    precoVenda DECIMAL (14, 2),
+    estoqueMinimo DECIMAL (14, 2)
+    );
+—---------------------------------------------------------------------------------------------------------
+
+
+
+
+Tabela produtoLote:
+* O campo codProduto é um campo inteiro, sendo chave primária da tabela e chave estrangeira da tabela produto;
+* O campo numeroLote é um campo inteiro, sendo chave primária da tabela;
+* O campo quantidadeAdquirida é um numérico com tamanho 14, com 2 casas decimais;
+* O campo quantidadeVendida é um numérico com tamanho 14, com 2 casas decimais;
+* O campo precoCusto é um numérico com tamanho 14, com 2 casas decimais;
+* O campo dataValidade é um campo de data;
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE produtoLote (
+    codProduto int PRIMARY KEY,
+    FOREIGN KEY (codProduto) REFERENCES produto (codProduto), 
+    numeroLote int PRIMARY KEY,
+    quantidadeAdiquirida DECIMAL(14, 2),
+    quantidadeVendida DECIMAL (14, 2),
+    precoCusto DECIMAL (14, 2),
+    dataValidade DATE
+    );
+—---------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+Tabela venda:
+* O campo codVenda é um campo inteiro, sendo chave primária da tabela;
+* O campo codCliente é um campo inteiro, sendo chave estrangeira da tabela cliente;
+* O campo codVendedor é um campo inteiro, sendo chave estrangeira da tabela vendedor;
+* O campo dataVenda é um campo de data, que tem como valor padrão a data atual, sendo que outras datas podem ser especificadas;
+* O campo enderecoEntrega é caracter, de tamanho variável máximo 60;
+* O campo status é caracter, de tamanho variável máximo 30;
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE venda (
+    codVenda int PRIMARY KEY,
+    codCliente int,
+    FOREIGN KEY (codCliente) REFERENCES cliente (codCliente), 
+    codVendedor int,
+    dataVenda date DEFAULT (CURRENT_DATE),
+    enderecoEntrega VARCHAR(60),
+    estatus VARCHAR(30)
+    );
+—---------------------------------------------------------------------------------------------------------
+
+
+
+
+Tabela itemVenda:
+* O campo codVenda é um campo inteiro, sendo chave primária da tabela e estrangeira da tabela venda;
+* O campo codProduto é um campo inteiro, sendo chave primária da tabela, e chave estrangeira da tabela lote (chave estrangeira de lote é composta por codProduto e numeroLote);
+* O campo numeroLote é um campo inteiro, sendo chave primária da tabela, e chave estrangeira da tabela lote;
+* O campo quantidade é um numérico com tamanho 14, com 2 casas decimais, sendo seu preenchimento obrigatório e com valor positivo;
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE itemVenda (
+    codVenda int PRIMARY KEY,
+    FOREIGN KEY (codVenda) REFERENCES venda (codVenda), 
+    codProduto int PRIMARY KEY,
+    FOREIGN KEY (codProduto) REFERENCES produtoLote (codProduto), 
+    numeroLote int PRIMARY KEY,
+    FOREIGN KEY (numeroLote) REFERENCES produtoLote (numeroLote), 
+    quantidade DECIMAL(14, 2) NOT NULL CHECK (quantidade > 0)
+    );
+—---------------------------------------------------------------------------------------------------------
+
+
+
+
+Tabela fornecedor:
+* O campo codFornecedor é um inteiro, sendo chave primária desta tabela;
+* O campo nomeFantasia é caracter, de tamanho variável máximo 80, sendo uma chave candidata;
+* O campo razaoSocial é caracter, de tamanho variável máximo 80, sendo uma chave candidata, de preenchimento obrigatório;
+* O campo ie (inscrição estadual) é caracter, de tamanho variável máximo 20, de preenchimento obrigatório, sendo uma chave candidata;
+* O campo cgc é caracter, de tamanho variável máximo 20, sendo uma chave candidata, de preenchimento obrigatório;
+* O campo endereco é caracter, de tamanho variável máximo 60;
+* O campo telefone é caracter, de tamanho variável máximo 20;
+* O campo codCidade é inteiro, sendo uma chave estrangeira da tabela cidade;
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE fornecedor (
+    codFornecedor int PRIMARY KEY,
+    nomeFantasia VARCHAR(80) UNIQUE,
+    razaoSocial VARCHAR(80) NOT NULL UNIQUE,
+    ie VARCHAR(20) NOT NULL UNIQUE,
+    cgc VARCHAR(20) NOT NULL UNIQUE,
+    endereco VARCHAR(60),
+    telefone VARCHAR(20),
+    codCidade INT,
+    FOREIGN KEY (codCidade) REFERENCES cidade (codCidade)  
+    );
+—---------------------------------------------------------------------------------------------------------
+
+
+
+
+Tabela pedido:
+* O campo codPedido é serial, sendo chave primária desta tabela;
+* O campo dataRealizacao é um campo de data, que tem como valor padrão a data atual, sendo que outras datas podem ser especificadas;
+* O campo dataEntrega é um campo de data;
+* O campo codFornecedor é um campo inteiro, sendo uma chave estrangeira da tabela fornecedor.;
+* O campo valor é um campo numérico de tamanho 20 com duas casas decimais;
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE pedido (
+    codPedido INT AUTO_INCREMENT PRIMARY KEY,
+    dataRealizaçao DATE DEFAULT (CURRENT_DATE),
+    dataEntrega DATE,
+    codFornecedor INT,
+    FOREIGN KEY (codFornecedor) REFERENCES fornecedor (codFornecedor), 
+    valor DECIMAL (20, 2)
+    );
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+
+
+Tabela itemPedido:
+* O campo codPedido é inteiro, sendo chave primária e estrangeira da tabela pedido;
+* O campo codProduto é inteiro, sendo chave primária e estrangeira da tabela produto;
+* O campo quantidade é um numérico com tamanho 14, com 2 casas decimais, sendo seu preenchimento obrigatório e com valor positivo;
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE itemPedido (
+    codPedido int PRIMARY KEY,
+    FOREIGN KEY (codPedido) REFERENCES pedido (codPedido), 
+    codProduto int PRIMARY KEY,
+    FOREIGN KEY (codProduto) REFERENCES produto (codProduto), 
+    quantidade DECIMAL(14, 2) NOT NULL CHECK (quantidade > 0)
+    );
+—---------------------------------------------------------------------------------------------------------
+        
+
+
+Tabela contasPagar:
+* O campo codTitulo é inteiro, sendo chave primária da tabela;
+* O campo dataVencimento é um campo de data, de preenchimento obrigatório;
+* O campo parcela é um campo inteiro;
+* O campo codPedido é inteiro sendo chave estrangeira da tabela pedido;
+* O campo valor é um campo numérico de tamanho 20 com duas casas decimais;
+* O campo dataPagamento é um campo de data;
+* O campo localPagamento é um campo de texto, de tamanho variável máximo 80;
+* O campo juros é um campo numérico de tamanho 12 com duas casas decimais;
+* O campo correcaoMonetaria é um campo numérico de tamanho 12 com duas casas decimais
+
+
+—---------------------------------------------------------------------------------------------------------
+CREATE TABLE contasPagar (
+codTitulo INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+dataVencimento DATE DEFAULT(CURRENT_DATE)  NOT NULL,
+parcela INT, 
+codPedido INT,
+valor DECIMAL(20,2),
+dataPagamento DATE,
+localPagamento VARCHAR(80),
+juros DECIMAL(12,2),
+correcaoMonetaria DECIMAL(12,2),
+CONSTRAINT fk_codPedido FOREIGN KEY (codPedido) REFERENCES pedido(codPedido)
+);
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+Tabela contasReceber:
+* O campo codTitulo é inteiro, sendo chave primária da tabela;
+* O campo dataVencimento é um campo de data, de preenchimento obrigatório;
+* O campo codVenda é inteiro sendo chave estrangeira da tabela venda, de preenchimento obrigatório;
+* O campo parcela é um campo inteiro;
+* O campo valor é um campo numérico de tamanho 20 com duas casas decimais;
+* O campo dataPagamento é um campo de data;
+* O campo localPagamento é um de texto caracter, de tamanho variável máximo 80;
+* O campo juros é um campo numérico de tamanho 12 com duas casas decimais;
+* O campo correcaoMonetaria é um campo numérico de tamanho 12 com duas casas decimais
+
+
+—---------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE contasReceber (
+            codTitulo INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            dataVencimento DATE NOT NULL,
+            codVenda INT NOT NULL, 
+            parcela INT,
+            valor DECIMAL(20,2),
+           dataPagamento DATE,
+           localPagamento VARCHAR(80),
+           juros DECIMAL(12,2),
+            correcaoMonetaria DECIMAL(12,2),
+CONSTRAINT fk_codVenda FOREIGN KEY (codVenda) REFERENCES venda(codVenda)
+);
+—---------------------------------------------------------------------------------------------------------
