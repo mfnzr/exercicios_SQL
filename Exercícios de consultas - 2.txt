@@ -28,7 +28,6 @@ SELECT codVenda, dataVenda, nome FROM venda, vendedor WHERE status = "Despachada
 3. Listar os clientes pessoa física que moram na Rua Marechal Floriano, 56.
 
 SELECT * FROM cliente WHERE endereco = "Rua Marechal Floriano, 56";
-SELECT endereco from cliente where endereco = "Rua Marechal Floriano, 56";
 —------------------------------------------------------------------------------------------------------------------------
 
 
@@ -59,5 +58,7 @@ SELECT codProduto, numeroLote, nome FROM produtoLote WHERE dataValidade < '2024-
 
 8. Listar o nome dos departamentos e o nome dos vendedores neles lotados.
 
-
+SELECT d.nome AS nome_departamento, v.nome AS nome_vendedor
+FROM departamento AS d
+JOIN vendedor AS v ON d.codDepartamento = v.codDepartamento;
 —------------------------------------------------------------------------------------------------------------------------
