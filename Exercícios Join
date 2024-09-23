@@ -1,0 +1,109 @@
+1-
+SELECT 
+    p.codPedido,
+    p.dataRealizacao,
+    p.dataEntrega,
+    f.nomeFantasia
+FROM
+    pedido p
+NATURAL JOIN
+    fornecedor f
+WHERE
+    YEAR(p.dataRealizacao) = 2014;
+
+--------------------------------------------------------------
+
+2-
+SELECT 
+    v.nome,
+    v.dataNascimento,
+    c.nome
+FROM 
+    vendedor v
+JOIN 
+    cidade c ON v.codCidade = c.codCidade
+WHERE 
+    c.nome = 'Apucarana';
+
+--------------------------------------------------------------
+3-
+SELECT
+    v.codVenda,
+    v.dataVenda,
+    ve.nome,
+    pl.numeroLote,
+    p.descricao
+FROM
+    venda v
+NATURAL JOIN
+    vendedor ve
+NATURAL JOIN
+    produto p
+NATURAL JOIN
+	produtoLote pl
+WHERE
+    p.descricao = 'cal';
+
+--------------------------------------------------------------
+4 -
+SELECT
+    c.sigla,
+    c.nome,
+    p.codProduto,
+    p.descricao,
+    p.estoqueMinimo
+FROM
+    classe c
+NATURAL JOIN
+    produto p
+WHERE
+    c.nome = 'Acabamentos';
+--------------------------------------------------------------
+
+5-
+SELECT
+    f.nomeFantasia,
+    pe.codPedido,
+    pe.dataRealizacao,
+    pe.dataEntrega
+FROM
+    fornecedor f
+NATURAL JOIN
+    produto p
+NATURAL JOIN
+	pedido pe
+--------------------------------------------------------------
+
+6-
+SELECT
+    p.codProduto,
+    p.descricao,
+    v.codVenda
+FROM
+    produto p
+LEFT JOIN
+    venda v on p.codProduto = v.codVenda;
+--------------------------------------------------------------
+
+7-
+SELECT
+    f.nomeFantasia,
+    p.codPedido,
+    p.dataEntrega
+FROM
+    fornecedor f
+LEFT JOIN 
+    pedido p ON f.codFornecedor = p.codFornecedor;
+--------------------------------------------------------------
+
+8-
+SELECT 
+    d.nome,
+    d.localizacao,
+    v.nome,
+    v.dataNascimento
+FROM
+    departamento d
+RIGHT JOIN
+    vendedor v on d.codDepartamento = v.codDepartamento;
+--------------------------------------------------------------
